@@ -5,9 +5,16 @@ import log from "./utils/logger.js";
 import performTransactions from "./utils/transactions.js";
 import { mintNft, signMessage } from "./contract.js";
 
+import "dotenv/config";
+
 const reffCode = `bfc7b70e-66ad-4524-9bb6-733716c4da94`;
 const proxyPath = "proxy.txt";
 const decimal = 1000000000000000000;
+
+const MY_WALLET = {
+  address: process.env.address,
+  privateKey: process.env.private_key,
+};
 
 const headers = {
   "Content-Type": "application/json",
@@ -165,7 +172,7 @@ const claimNftReward = async ({
 
 const main = async () => {
   log.warn(banner);
-  const wallets = readWallets();
+  const wallets = [MY_WALLET];
   const proxyList = readProxyFile(proxyPath);
   let index = 0;
   const claimedState = {};
@@ -249,6 +256,4 @@ const main = async () => {
   }
 };
 // 让我们开始吧
-// test
-// tst
 main();
