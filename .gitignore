@@ -2,3 +2,5 @@ node_modules
 proxy.txt
 wallets.json
 package-lock.json
+.env
+/wallets/*
