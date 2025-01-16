@@ -13,7 +13,7 @@ async function faucet() {
   log.warn(`此脚本将从您的主钱包向wallets.json文件中的多个钱包分发资金(ETH)。`);
   log.warn(`请确保您的主钱包中有足够的ETH来支付交易费用和分发的总金额。`);
 
-  const wallets = readWalletsFromPath("./wallets/batch-01.json");
+  const wallets = readWalletsFromPath("./wallets/batch-02.json");
   if (wallets.length === 0) {
     log.error(`在wallets.json中未找到钱包。请添加钱包以继续。`);
     return;

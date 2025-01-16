@@ -82,3 +82,29 @@ export async function sendFaucet(faucetAmount, addressRecipient, pvkey) {
     return null;
   }
 }
+
+export const readWalletsFromCsv = (filePath) => {
+  if (fs.existsSync(filePath)) {
+    return fs
+      .readFileSync(filePath, "utf-8")
+      .split("\n")
+      .filter((line) => line.trim() !== "")
+      .map((line) => {
+        const [name, address, privateKey] = line
+          .split(",")
+          .map((item) => item.trim());
+        return { address, privateKey };
+      });
+  } else {
+    log.info(`在${filePath}中未找到钱包`);
+    return [];
+  }
+};
+export const writeWalletFile = (filePath, content) => {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(content, null, 2));
+    log.info(`钱包数据已写入${filePath}`);
+  } catch (error) {
+    log.error(`写入${filePath}时出错：`, error);
+  }
+};
