@@ -7,13 +7,15 @@ import {
 import banner from "./utils/banner.js";
 import log from "./utils/logger.js";
 
+const WALLET_FILE_PATH = "./wallets/batch-06.json";
+
 async function faucet() {
   log.warn(banner);
   log.warn(`=== 本脚本用于Base主网自动发送 ===`);
   log.warn(`此脚本将从您的主钱包向wallets.json文件中的多个钱包分发资金(ETH)。`);
   log.warn(`请确保您的主钱包中有足够的ETH来支付交易费用和分发的总金额。`);
 
-  const wallets = readWalletsFromPath("./wallets/batch-02.json");
+  const wallets = readWalletsFromPath(WALLET_FILE_PATH);
   if (wallets.length === 0) {
     log.error(`在wallets.json中未找到钱包。请添加钱包以继续。`);
     return;
@@ -87,7 +89,9 @@ async function faucet() {
       const amountToSend = amount * (wallets.length - (i + 1));
 
       log.info(
-        `=== 从钱包${senderWallet.address}向钱包${receiptWallet.address}转账${amountToSend} ETH ===`
+        `===[${i + 1}]: 从钱包${senderWallet.address}向钱包${
+          receiptWallet.address
+        }转账${amountToSend} ETH ===`
       );
       const sendToWallets = await sendFaucet(
         amountToSend.toFixed(6).toString(),
