@@ -58,7 +58,11 @@ export function readWalletsFromPath(filePath) {
 export async function sendFaucet(faucetAmount, addressRecipient, pvkey) {
   log.info(`发送水龙头 ${faucetAmount} 到地址 ${addressRecipient}`);
   try {
-    const provider = new ethers.JsonRpcProvider("https://base.llamarpc.com");
+    // Base Sepolia
+    const provider = new ethers.JsonRpcProvider("https://sepolia.base.org");
+
+    // Base Mainnet
+    // const provider = new ethers.JsonRpcProvider("https://base.llamarpc.com");
     const wallet = new ethers.Wallet(pvkey, provider);
     const feeData = await provider.getFeeData();
 

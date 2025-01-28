@@ -1,7 +1,7 @@
 import { readWalletsFromCsv, writeWalletFile } from "./utils/script.js";
 
-const inputFile = "./wallets/batch-06.csv";
-const outputFile = "./wallets/batch-06.json";
+const inputFile = "./wallets/privasea.csv";
+const outputFile = "./wallets/privasea.json";
 
 const wallets = readWalletsFromCsv(inputFile);
 writeWalletFile(outputFile, wallets);

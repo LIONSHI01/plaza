@@ -4,3 +4,4 @@ wallets.json
 package-lock.json
 .env
 /wallets/*
+/wallets
