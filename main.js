@@ -246,7 +246,7 @@ const main = async () => {
         console.error(err);
       }
     }
-    log.info("睡眠24小时...");
+    log.info(`睡眠${coolDownPeriod}小时...`);
     await new Promise((resolve) =>
       setTimeout(resolve, coolDownPeriod * 60 * 60 * 1000)
     );
