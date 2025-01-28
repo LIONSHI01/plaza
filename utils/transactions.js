@@ -4,7 +4,7 @@ import log from "./logger.js";
 import "dotenv/config";
 
 // 配置
-const provider = new ethers.JsonRpcProvider(NETWORKS["base_sepolia_private"]);
+const provider = new ethers.JsonRpcProvider(NETWORKS["base_sepolia"]);
 const contractAddress = process.env.TRANSACTION_MESSAGE_CONTRACT;
 const explorer = "https://sepolia.basescan.org/tx/";
 const ApproveAmount = ethers.parseUnits("10000", "ether");
