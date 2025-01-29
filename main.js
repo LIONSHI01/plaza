@@ -151,6 +151,7 @@ const claimNftReward = async ({
   log.info(`=== 领取 NFT ${nftType} 奖励 地址: ${wallet.address} ===`);
   const signWallet = await signMessage(wallet.privateKey);
   const signature = await getSign(nftType, wallet.address, signWallet, proxy);
+  console.log("🚀 ~ signature:", signature);
 
   if (signature && signature !== "claimed") {
     const mintResult = await mintNft(wallet.privateKey, signature);
@@ -193,14 +194,14 @@ const main = async () => {
         );
 
         log.info(`=== 检查 NFT 奖励 ===`);
-        await claimNftReward({
-          points,
-          nftType: 1,
-          requiredPoints: 50,
-          wallet,
-          proxy,
-          claimedState,
-        });
+        // await claimNftReward({
+        //   points,
+        //   nftType: 1,
+        //   requiredPoints: 50,
+        //   wallet,
+        //   proxy,
+        //   claimedState,
+        // });
 
         await claimNftReward({
           points,
