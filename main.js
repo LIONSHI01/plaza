@@ -179,32 +179,32 @@ const main = async () => {
         );
 
         log.info(`=== 检查 NFT 奖励 ===`);
-        await claimNftReward({
-          points,
-          nftType: 1,
-          requiredPoints: 50,
-          wallet,
-          proxy,
-          claimedState,
-        });
+        // await claimNftReward({
+        //   points,
+        //   nftType: 1,
+        //   requiredPoints: 50,
+        //   wallet,
+        //   proxy,
+        //   claimedState,
+        // });
 
-        await claimNftReward({
-          points,
-          nftType: 3,
-          requiredPoints: 200,
-          wallet,
-          proxy,
-          claimedState,
-        });
+        // await claimNftReward({
+        //   points,
+        //   nftType: 3,
+        //   requiredPoints: 200,
+        //   wallet,
+        //   proxy,
+        //   claimedState,
+        // });
 
-        await claimNftReward({
-          points,
-          nftType: 5,
-          requiredPoints: 500,
-          wallet,
-          proxy,
-          claimedState,
-        });
+        // await claimNftReward({
+        //   points,
+        //   nftType: 5,
+        //   requiredPoints: 500,
+        //   wallet,
+        //   proxy,
+        //   claimedState,
+        // });
 
         if (!claimedState[walletKey].nft1 && !claimedState[walletKey].nft3) {
           log.info(`=== 此地址没有 NFT 奖励 ===`);
