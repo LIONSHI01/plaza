@@ -59,10 +59,10 @@ export async function sendFaucet(faucetAmount, addressRecipient, pvkey) {
   log.info(`发送水龙头 ${faucetAmount} 到地址 ${addressRecipient}`);
   try {
     // Base Sepolia
-    const provider = new ethers.JsonRpcProvider("https://sepolia.base.org");
+    // const provider = new ethers.JsonRpcProvider("https://sepolia.base.org");
 
     // Base Mainnet
-    // const provider = new ethers.JsonRpcProvider("https://base.llamarpc.com");
+    const provider = new ethers.JsonRpcProvider("https://base.llamarpc.com");
     const wallet = new ethers.Wallet(pvkey, provider);
     const feeData = await provider.getFeeData();
 

@@ -7,7 +7,7 @@ import {
 import banner from "./utils/banner.js";
 import log from "./utils/logger.js";
 
-const WALLET_FILE_PATH = "./wallets/batch-06.json";
+const WALLET_FILE_PATH = "./wallets/batch-07.json";
 
 async function faucet() {
   log.warn(banner);
@@ -106,6 +106,9 @@ async function faucet() {
           `成功从${senderWallet.address}向${receiptWallet.address}转账${amountToSend} ETH。`
         );
       }
+
+      // Delay 2 second to avoid spam RPC
+      await new Promise((resolve) => setTimeout(resolve, 2 * 1000));
     }
 
     log.info(`=== 资金分发完成 ===`);

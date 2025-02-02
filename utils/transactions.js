@@ -8,7 +8,7 @@ const provider = new ethers.JsonRpcProvider(NETWORKS["base_sepolia"]);
 const contractAddress = process.env.TRANSACTION_MESSAGE_CONTRACT;
 const explorer = "https://sepolia.basescan.org/tx/";
 const ApproveAmount = ethers.parseUnits("10000", "ether");
-const depositAmount = ethers.parseUnits("0.001", "ether");
+const depositAmount = ethers.parseUnits("0.0001", "ether");
 const minAmount = ethers.parseUnits("0.00001", "ether");
 const tokens = [
   { address: "0x13e5fb0b6534bb22cbc59fae339dbbe0dc906871", name: "wstETH" },
