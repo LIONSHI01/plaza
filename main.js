@@ -4,12 +4,11 @@ import banner from "./utils/banner.js";
 import log from "./utils/logger.js";
 import performTransactions from "./utils/transactions.js";
 import { mintNft, signMessage } from "./contract.js";
-import "dotenv/config";
+import { HttpsProxyAgent } from "https-proxy-agent";
 
 const reffCode = `bfc7b70e-66ad-4524-9bb6-733716c4da94`;
 const proxyPath = "proxy.txt";
 const decimal = 1000000000000000000;
-const coolDownPeriod = Number(process.env.COOL_DOWN_PERIOD);
 
 const headers = {
   "Content-Type": "application/json",
@@ -24,48 +23,34 @@ const headers = {
   "x-plaza-vercel-server": "undefined",
 };
 
-const createAxiosInstance = (proxyUrl) => {
+const createAxiosInstance = (proxyUrl = null) => {
+  const baseURL = "https://api.plaza.finance/";
+
   if (proxyUrl) {
-    const proxyParts = proxyUrl.match(
-      /^http:\/\/([^:]+):([^@]+)@([^:]+):(\d+)$/
-    );
+    const agent = new HttpsProxyAgent(proxyUrl);
 
-    if (proxyParts) {
-      const [, user, password, host, port] = proxyParts;
-
-      return axios.create({
-        baseURL: "https://api.plaza.finance/",
-        headers,
-        proxy: {
-          protocol: "http",
-          host: host,
-          port: parseInt(port, 10),
-          auth: {
-            username: user,
-            password: password,
-          },
-        },
-      });
-    } else {
-      throw new Error("代理URL格式无效");
-    }
+    return axios.create({
+      baseURL,
+      headers,
+      httpAgent: agent,
+      httpsAgent: agent,
+    });
   } else {
     return axios.create({
-      baseURL: "https://api.plaza.finance/",
+      baseURL,
       headers,
     });
   }
 };
-
 const getFaucet = async (address, proxyUrl) => {
   const axiosInstance = createAxiosInstance(proxyUrl);
   try {
     const response = await axiosInstance.post("/faucet/queue", { address });
-    log.info(`水龙头响应：成功`);
+    log.info(`水龙头响应: 成功`);
     return "success";
   } catch (error) {
     log.error(
-      `获取水龙头时出错: ${error.response?.data?.message || error.message}`
+      `领取水龙头时出错: ${error.response?.data?.message || error.message}`
     );
     return null;
   }
@@ -124,7 +109,7 @@ const getSign = async (level, user, signature, proxyUrl) => {
     log.error(
       `获取签名时出错: ${error.response?.data?.message || error.message}`
     );
-    if (error.response?.data?.message === "用户已领取奖励") {
+    if (error.response?.data?.message === "User already claimed the reward") {
       return "claimed";
     }
     return null;
@@ -148,15 +133,14 @@ const claimNftReward = async ({
     return;
   }
 
-  log.info(`=== 领取 NFT ${nftType} 奖励 地址: ${wallet.address} ===`);
+  log.info(`=== 领取 NFT ${nftType} 奖励给地址: ${wallet.address} ===`);
   const signWallet = await signMessage(wallet.privateKey);
   const signature = await getSign(nftType, wallet.address, signWallet, proxy);
-  console.log("🚀 ~ signature:", signature);
 
   if (signature && signature !== "claimed") {
     const mintResult = await mintNft(wallet.privateKey, signature);
     if (mintResult) {
-      log.info(`=== NFT ${nftType} 成功领取 ===`);
+      log.info(`=== 成功领取 NFT ${nftType} ===`);
       claimedState[walletKey][`nft${nftType}`] = true;
     } else {
       log.error(`=== 领取 NFT ${nftType} 失败 ===`);
@@ -179,10 +163,11 @@ const main = async () => {
       claimedState[walletKey] = claimedState[walletKey] || {
         nft1: false,
         nft3: false,
+        nft5: false,
       };
       const proxy =
         proxyList.length > 0 ? proxyList[index % proxyList.length] : null;
-      log.warn(`使用代理运行: ${proxy || "无代理"}`);
+      log.warn(`使用代理运行: ${proxy || "没有代理"}`);
       try {
         await claimRequest(wallet.address, proxy);
 
@@ -194,14 +179,14 @@ const main = async () => {
         );
 
         log.info(`=== 检查 NFT 奖励 ===`);
-        // await claimNftReward({
-        //   points,
-        //   nftType: 1,
-        //   requiredPoints: 50,
-        //   wallet,
-        //   proxy,
-        //   claimedState,
-        // });
+        await claimNftReward({
+          points,
+          nftType: 1,
+          requiredPoints: 50,
+          wallet,
+          proxy,
+          claimedState,
+        });
 
         await claimNftReward({
           points,
@@ -212,8 +197,17 @@ const main = async () => {
           claimedState,
         });
 
+        await claimNftReward({
+          points,
+          nftType: 5,
+          requiredPoints: 500,
+          wallet,
+          proxy,
+          claimedState,
+        });
+
         if (!claimedState[walletKey].nft1 && !claimedState[walletKey].nft3) {
-          log.info(`=== 此地址没有可领取的 NFT 奖励 ===`);
+          log.info(`=== 此地址没有 NFT 奖励 ===`);
         } else {
           log.info(`=== 此地址的 NFT 奖励已领取 ===`);
         }
@@ -223,22 +217,22 @@ const main = async () => {
         log.info(`=== 地址: ${wallet.address} | wstETH 余额: ${balance} ===\n`);
 
         if (balance > 0.02) {
-          log.info(`开始进行交易，地址: ${wallet.address}`);
+          log.info(`开始为地址 ${wallet.address} 执行交易`);
           await performTransactions(wallet.privateKey, 0);
           await performTransactions(wallet.privateKey, 1);
 
-          log.info("冷却10秒后继续...\n");
+          log.info("冷却时间10秒后继续...\n");
           await new Promise((resolve) => setTimeout(resolve, 10000));
         } else {
-          log.info(`=== wstETH 余额不足，尝试领取水龙头 ===`);
+          log.info(`=== wstETH 不足，尝试领取水龙头 ===`);
           const faucet = await getFaucet(wallet.address, proxy);
           await new Promise((resolve) => setTimeout(resolve, 15000));
 
           if (faucet === "success") {
-            log.info(`开始进行交易，地址: ${wallet.address}`);
+            log.info(`开始为地址 ${wallet.address} 执行交易`);
             await performTransactions(wallet.privateKey, 0);
             await performTransactions(wallet.privateKey, 1);
-            log.info("冷却10秒后继续...\n");
+            log.info("冷却时间10秒后继续...\n");
             await new Promise((resolve) => setTimeout(resolve, 10000));
           }
         }
@@ -247,11 +241,9 @@ const main = async () => {
         console.error(err);
       }
     }
-    log.info(`睡眠${coolDownPeriod}小时...`);
-    await new Promise((resolve) =>
-      setTimeout(resolve, coolDownPeriod * 60 * 60 * 1000)
-    );
+    log.info("休眠24小时...");
+    await new Promise((resolve) => setTimeout(resolve, 24 * 60 * 60 * 1000));
   }
 };
-// 让我们开始吧
+// 运行
 main();

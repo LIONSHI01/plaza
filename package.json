@@ -7,6 +7,7 @@
     "start": "node main.js",
     "autosend": "node autoSend.js",
     "create": "node createWallet.js",
+    "faucet": "node faucet.js",
     "gen-wallets": "node gen-wallets.js"
   },
   "author": "@zlkcyber",
