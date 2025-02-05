@@ -9,7 +9,6 @@ import { HttpsProxyAgent } from "https-proxy-agent";
 const reffCode = `bfc7b70e-66ad-4524-9bb6-733716c4da94`;
 const proxyPath = "proxy.txt";
 const decimal = 1000000000000000000;
-
 const headers = {
   "Content-Type": "application/json",
   Referer: "https://testnet.plaza.finance/",
@@ -74,7 +73,7 @@ const claimRequest = async (address, proxyUrl) => {
   try {
     const response = await axiosInstance.post(`/referrals/claim`, {
       address,
-      code: "JL4590xVLSix",
+      code: "9x7fVKPfylak",
     });
     return response.data;
   } catch (error) {
@@ -179,32 +178,32 @@ const main = async () => {
         );
 
         log.info(`=== 检查 NFT 奖励 ===`);
-        // await claimNftReward({
-        //   points,
-        //   nftType: 1,
-        //   requiredPoints: 50,
-        //   wallet,
-        //   proxy,
-        //   claimedState,
-        // });
+        await claimNftReward({
+          points,
+          nftType: 1,
+          requiredPoints: 50,
+          wallet,
+          proxy,
+          claimedState,
+        });
 
-        // await claimNftReward({
-        //   points,
-        //   nftType: 3,
-        //   requiredPoints: 200,
-        //   wallet,
-        //   proxy,
-        //   claimedState,
-        // });
+        await claimNftReward({
+          points,
+          nftType: 3,
+          requiredPoints: 200,
+          wallet,
+          proxy,
+          claimedState,
+        });
 
-        // await claimNftReward({
-        //   points,
-        //   nftType: 5,
-        //   requiredPoints: 500,
-        //   wallet,
-        //   proxy,
-        //   claimedState,
-        // });
+        await claimNftReward({
+          points,
+          nftType: 5,
+          requiredPoints: 500,
+          wallet,
+          proxy,
+          claimedState,
+        });
 
         if (!claimedState[walletKey].nft1 && !claimedState[walletKey].nft3) {
           log.info(`=== 此地址没有 NFT 奖励 ===`);
